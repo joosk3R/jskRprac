@@ -89,3 +89,139 @@ for (s in score){
 install.packages('RSADBE')
 library(RSADBE)
 data(Bug_Metrics_Software)
+ <-1000
+r<- rnorm(n,mean=0,sd = 1)#정규분포 난수
+hist(r)
+r2<-runif(n,min = 0,max=1)#유니폼 난수
+hist(r2,col = "red")
+n<-20
+r3<-rbinom(n,1,1/3)
+hist(r3)
+r3
+r4<-rbinom(n,4,1/2)
+r4
+set.seed(123)
+x;b
+x=c(1,2,3,4,5,6)
+var(x)
+sd(x)
+sqrt(3.5)
+x=c(305,450,302,124,553,320)
+names(x) = c('2014-1',"2015-1",'2014-2','2015-2','2014-3','2015-3')
+pie(x,border = 'blue',labels = names(x),col = rainbow(6),cex = 1.2)
+title('asd')
+
+install.packages('plotrix')
+library(plotrix)
+slices <- c(10,12,4,16,8)
+lbs <- c("us",'uk','Australia',"germany",'France')
+pie3D(slices,labels=lbs,explode = 0.1, main = "asd")
+
+dotchart(x,labels = names(x),color = c("green","red"),pch = 1:3,lcolor ="black",cex = 1.2 ,main ="asd" , xlab = "매출액액")
+data("VADeaths")
+barplot(VADeaths,beside = T,col = rainbow(6))
+barplot(VADeaths,beside = F,col = rainbow(6))
+legend(19,71,c('50-54','55-59','60-64','65-69','70-74'),cex=0.8,fill = rainbow(8))
+barplot(x,horiz = T,space = 2,cex.names = 0.8, xlab = "매출액", ylab = "분기현황"
+        ,xlim = c(0,600),col = rep(c('red','green'),4), main = "asdasd")
+barplot(x,horiz = T,xlim = c(0,600),cex.names = 0.8, col = rainbow(6),main = 'asd')
+data("iris")
+hist(iris$Sepal.Width,freq = F,main = "asd",col = 'mistyrose',xlim = c(2.0,4.5))
+lines(density((iris$Sepal.Width)),col = "blue")     
+x=seq(2.0,4.5,0.1)
+curve(dnorm(x,mean=mean(iris$Sepal.Width),sd = sd(iris$Sepal.Width)),col= 'red',add = T)
+legend(c('density','normal'),lty = 1)
+
+boxplot(VADeaths, range=0,col = "blue")
+abline(h=37,lty = 16 ,col = "red")
+cm= colMeans(VADeaths)
+points(1:4,cm,pch = 16 , col ="black")
+
+set.seed(10)
+price = runif(10,min = 1,max = 100)
+plot(price, col = 'blue',pch=16)
+par(new = T)
+line_chart = 1:100
+plot(line_chart, type = 'l',col='red',,axes = F,ann = F)
+text(70,80,"대각선 추가", col='blue')
+
+install.packages('HistData')
+library(HistData)
+data(Galton)
+head(Galton)
+class(Galton)
+galtonData <- as.data.frame(table(Galton$child,Galton$parent))
+names(galtonData) = c('child','parent','freq')
+head(galtonData)
+parent = as.numeric(galtonData$parent)
+child = as.numeric(galtonData$child)
+plot(parent ,child,pch=21,col = 'blue',bg='green',
+     cex=0.2 * galtonData$freq,xlab = 'parent',ylab = 'child')
+
+install.packages("plyr")
+library(plyr)
+data("iris")
+avg_df <- ddply(iris,.(Species),summarise,avg = mean(Sepal.Length),
+                std = sd(Sepal.Length))
+?ddply
+avg_df
+a1=tapply(iris$Sepal.Length,iris$Species,sd)
+a2=tapply(iris$Sepal.Length,iris$Species,mean)
+merge(a1,a2)
+b=cbind(a1,a2)
+b=as.data.frame(b)
+colnames(b)=(c('std',"mean"))
+b
+
+example(join)
+?join
+x = data.frame(id = c(1,2,3,4,6), weight = c(55,73,60,57,80))
+y = data.frame(id = c(5,4,1,3,2), height = c(155,173,160,157,180))
+left <- join(x,y,by='id',type = "right")
+inner <- join (x,y,by ='id',type = 'inner')
+inner
+full <- join(x,y,by="id",type = "full")
+full
+?merge
+
+install.packages(c("dplyr","hflights"))
+library(dplyr)
+library(hflights)
+str(hflights)
+hflights_df<- tbl_df(hflights)
+class(hflights_df)
+filter(hflights_df,Month ==1&DayofMonth ==2)
+filter(hflights_df,Month >= 7 &DayofMonth <9)
+arrange(hflights_df,Year,Month,DepTime) #오름차순 정리
+arrange(hflights_df,desc(Year),desc(Month),desc(DepTime)) #내림차순 정리 desc사용
+select(hflights_df,Year,Month,DepTime,ArrTime)
+select(hflights_df,Year:ArrTime)
+select(hflights_df,-2)
+mutate(hflights_df,gain = ArrDelay -DepDelay,
+       gain_per_hour = gain/(AirTime/60))
+mutate(hflights_df,a = ActualElapsedTime-AirTime,
+       a_perhour = a/60)  #mutate로 생성 mutate(data, x,y,.....추가할 데이터값)
+summarize(hflights_df,avgAirTime = mean(AirTime, na.rm =TRUE))
+mean(hflights_df$AirTime,na.rm = T) # 왜 굳이 이렇게함?
+summarise(hflights_df,cnt = length(DepDelay),delay = mean(DepDelay, na.rm = T))
+length(hflights_df$DepDelay)
+mean(hflights_df$DepDelay,na.rm = T) #summarise 사용시 한번에 여러가지의 함수 사용가능
+#앞에서 ddply(data,.(범주(=value)),summarise,function1,2.....)여기서 서멀라이즈 사용해서 여러가지 함수 사용함
+#ddply(데이터프레임,기준컬럼,summarise,새컬럼이름=계산함수)
+#subset(데이터프레임, 조건, select=뽑아낼 컬럼)
+summarise(hflights_df,sums= sum(DepDelay,na.rm = T))
+group_by(hflights_df,Month) #지정한 열의 수준(level)별로 그룹화된 결과를 얻을 수 있습니다.
+
+select(filter(hflights,Month==1| Month==2),
+       Year,Month, DepTime,ArrTime)
+
+#ex1
+hflights %>%  # c컨트롤 쉬프트 엠으로 쉽게 쓸수있음 %>% 데이터를 보내는것 여픙로 hflight를 필터에 보내고 필터링된 데이터를 셀렉션에 보낸다.
+  filter(Month==1| Month==2) %>%
+  select(Year,Month, DepTime,ArrTime)
+#ex2
+hflights_df %>% 
+  group_by(Year, Month, DayofMonth) %>% 
+  summarise(arr = mean(ArrDelay, na.rm = TRUE), 
+          dep = mean(DepDelay, na.rm = TRUE)) %>% 
+  filter(arr > 30 |  dep > 30)
