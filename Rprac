@@ -1,0 +1,233 @@
+install.packages("XML")
+install.packages("httr")
+library("XML")
+library(httr)
+url<-"https://ssti.org/blog/useful-stats-capita-personal-income-state-2010-2015"
+get_url<-GET(url)
+get_url$content
+rawToChar(get_url$content)
+html_cont <-readHTMLTable(rawToChar(get_url$content),stringsAsFactors = F)
+html_cont <- as.data.frame(html_cont)
+html_cont
+
+getwd()
+setwd(readClipboard())
+getwd()
+student <- read.table("student.txt")
+student
+student1 <- read.table("student1.txt", header =T)
+student1
+student2 <- read.table("student2.txt",header = T,sep = ';')
+student2 
+student3 <- read.table("student3.txt",header = T,sep = " ",na.strings = '-')
+student3
+student4<-read.table("student4.txt",header = T,sep=',',na.strings = '-')
+student4
+
+install.packages("data.table")
+library(data.table)
+stock <- fread("stock.csv") #대용량 데이터(>1GB)을 빠르게 읽음
+stock <- read.csv('stock.csv')
+class(stock)
+install.packages("xlsx")
+install.packages("rJava")
+library(xlsx)
+library(rJava)
+studentex <- read.xlsx("studentexcel.xlsx",sheetIndex = 1,encoding = "UTF-8")
+studentex
+class(studentex)
+write.table(student,"student_new.txt",row.names = F,quote = F) # txt파일 생성
+  student_new <- read.table("student_new.txt",header =T)
+student_new 
+
+write.csv(student4,"student4_new.csv",row.names = F,quote =F,fileEncoding = "UTF-8") #csv파일 생성
+student4_new <- read.csv("student4_new.csv",na.strings = '-',fileEncoding = "UTF-8")
+student4_new
+fwrite(stock,"stock_new.csv") #저장
+write.xlsx(studentex,"studentex_new.xlsx",row.names = F)
+studentex
+
+GDP_ranking <- read.csv("http://databank.worldbank.org/data/download/GDP.csv",skip=3)[2:206,-c(3,6)]
+head(GDP_ranking)
+GDP_ranking15<-head(GDP_ranking,15)
+names(GDP_ranking15)<- c('Code',"Ranking","Nation",'GDP')
+library(stringr)
+num_gdp <- as.numeric(str_replace_all(GDP_ranking15$GDP,',',''))/1000
+GDP_ranking15$GDP <- num_gdp
+barplot(GDP_ranking15$GDP , col=rainbow(15),xlab="국가",ylab='단위',names.arg = GDP_ranking15$Nation,las = 2, cex.names =0.8)
+setwd(readClipboard())
+data <- read.csv("data.csv")
+data
+library(reshape2)
+wide<- dcast(data, Customer_ID ~ Date, value.var = "Buy",sum)
+wide
+long<-melt(wide, id = 'Customer_ID')
+long
+names(long)[2:3] = c("Date","Buy")
+long
+
+#melt를 사용해서  wide -> long 으로 바꿈
+data("smiths")
+smiths
+long <- melt(smiths,id=1:2)
+long
+
+# dcast 사용해서 long -> wide 변경
+dcast(long,subject +time ~variable,value.var = 'value')
+dcast(long,subject+time ~... )
+
+#3차원 배열형식 변경
+data("airquality")
+airquality
+str(airquality)
+air_melt <-melt(airquality,id = c("Month","Day"), na.rm = T)
+head(air_melt)
+
+#acast(data,Y~X~value)
+acast<- acast(air_melt,Day~Month~variable) #air_mlet에서 variable인 날씨에 대한 array 배열
+acast
+class(acast)
+a=1:5
+class(a)
+a
+a=c(a)
+a
+class(a)
+paste("file",a,'.txt',collapse = ',')
+num<-scan()
+df<-data.frame()
+df=edit(df)
+df
+student <- read.table(file.choose(),header = T)
+student
+
+a=c(1:3)
+b=c('a','b','c')
+c=c('ㄱ','ㄴ','ㄷ')
+df1= data.frame(a,b,c)
+df1
+which(df1$a == 2)
+df1[which(df1$b == "c"),]
+
+data("VADeaths")
+barplot(VADeaths,beside = T,main = "Death",col = rainbow(5))
+legend(19,70,rownames(VADeaths),cex = 0.8,fill = 'blue')
+x=rnorm(1000)
+y=rnorm(1000)
+xy=matrix(c(x,y),length(x),2)
+plot(xy,col=densCols(xy),cex=2,pch=16)       
+
+data("iris3")
+iris3
+str(iris3)
+colnames(iris3)
+plot(iris3,pch = 21,cex = 0.8,xlab =)
+plot(iris[,1],iris[,3],col = iris[,5],main = 'iris 데이터 테이블 산포도 차트트')
+names(iris)
+
+
+#8.2번
+library(regbook)
+data("restaurant")
+sdfit <- lm(Y~X + I(X^2),aggregate(Y~X,restaurant, sd))
+s<- predict(sdfit, newdata = data.frame(X=restaurant$X))
+w <- 1/s^2
+w
+fit.wls <- lm(Y~X, restaurant ,weights = w)
+deviance(fit.wls)
+sum(resid(fit.wls)^2)
+sum(w*resid(fit.wls)^2)
+summary(fit.wls)
+anova(fit.wls)
+#잔차와 SSE값이 동일하다.
+
+#8.6번
+data("stackloss")
+fitM1 <- rlm(stack.loss~.,stackloss,method = "M",psi = psi.bisquare )
+fitM2 <- rlm(stack.loss~.,stackloss,method = "M",psi = psi.bisquare , c=3)
+summary(fitM2)
+#Y = -36.7831 + 0.8329X1 + 0.4795X2 + -0.0764X3
+par(mfrow = c(2,2))
+plot(fitM1, which= 7:8)
+plot(fitM2, which= 7:8)
+#산점도를 그려 봤을때, 위에 c= 4.685 일때와 달리1,3 번 자료값이 특이값에 추가되어
+#높은 지렛점과 동시의 특이점인 나쁜 지렛점이 된다.
+
+drawStars <- function(num){
+  if (num>12 | num<2){
+    a<-cat("2부터 10까지의 정수를 입력하시오!!") }
+  else{b<-cat("높이가",num,"인 직각 삼각형\n")
+  for(i in 1:num){
+    a=rep(" ",num-i)
+    b=rep("*",i)
+    cat(a,b)
+    cat('\n')
+  }
+  }
+}
+drawStars(10)
+dat <- c("2022/01/15,2500 Won,Samsung Card,K Mart",
+         "2022/01/16,30000 Won,Hyundai Card,H Mart",
+         "2022/01/20,15000 Won,Kookmin Card,C Mart")
+library(stringr)
+binddat<-str_c(dat,collapse = '|')
+binddat
+
+drawStars <- function(num){
+  if (num>10 | num<2){a<-cat("2 부터 10 까지의 정수를 입력하시오!!") }
+  else{b<-cat("높이가",num,"인 직각 삼각형")}
+}
+drawStars(13)
+drawStars(4)
+  #8.9번
+#1
+data("longley")
+pairs(longley,pch = 16)
+#x1,x2,x4,x5 들에게 강력한 양의 선형관계가 있다.
+#비슷한 그래프가 여럿 있는것으로 보아 다중 공선성의 존재 가능성이 있다.
+
+#2
+fit<-lm(Employed ~ ., longley)
+summary(fit)
+summary(vif(fit))
+a=cor(longley[1:6])
+diag(solve(a)) #VIF값
+b=eigen(a)$values #고유값값
+sqrt(max(b)/b) #조건지수
+#VIF의 값이 10보다 큰 설명변수가 Armed.Forces를 제외한 모두임으로 다중공선성이 존재한다.
+#0의 가까운 고유값이 2개 이므로 선형종속이 2개 있다고 파악할 수 있다.
+#조건지수가 30이상이 2개 이므로 선형종속이 2개 있다고 파악할 수 있다. 
+
+#3
+par(mfrow = c(1,1))
+fitr <- lm.ridge(Employed~., longley,lambda = seq(0,0.1,0.01))
+plot(lm.ridge(Employed~., longley,lambda = seq(0,0.1,0.01)))
+select(fitr)
+#lambda 는 0.03~0.07 사이 사용 0.045로 설정
+
+#4
+ftt.ridge <-lm.ridge(Employed~ .,longley,lambda = 0.045)
+ftt.ridge
+#계수들이 전부 변하고 GNP 설명변수는 부호가 바뀌었다.
+
+#5
+pr <- princomp(longley[1:6],cor = T) #특이값 분해를 이용한 주성분분석
+summary(pr)
+plot(pr,type ="l",pch =16) #주성분 분석 분산도
+longley.df <- data.frame(pr$scores) 
+longley.df$y <- longley$Employed
+fit.longley <- lm(y ~., longley.df) 
+summary(fit.longley)
+#불완전 주성분 회귀귀
+fit.pcr <- pcr(Employed ~.,longley,ncomp =3)
+summary(fit.pcr)
+coef(fit.pcr) 
+
+#6
+coef(fit) #중회귀
+coef(ftt.ridge) #능형회귀
+coef(fit.pcr) #불완전 주성분 회귀
+#중회귀 모형 :  Y = -3482 + 0.01506X1 -0.03582X2 -0.02050X3 -0.01033X4 -0.05110X5 +1.829
+#능형회귀모형 : Y = -1372 + 0.03487X1 +0.00987X2 -0.01262X3 -0.00736X4 -0.06703X5 +0.738 
+#불완전 주성분회귀: Y = -358.7 + 0.09780X1 + 0.01267X2 -0.01161X3 -0.005987X4 + 0.15386X5 + 0.20295 
+getwd()
