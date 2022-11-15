@@ -388,3 +388,102 @@ weight <- c(78,49,52,53,50,57,53,54,71,73,55,73,51,53,65,48,59,64,48,53,78,45,56
 cor(height, weight)
 (data.frame(height,weight))
 plot(x = height, y = weight, xlab = 'height(cm)', ylab = 'weight(kg)', main = 'height(cm) and weight(kg)')
+
+library(data.table)
+library(stringr)
+setwd(readClipboard())
+d1 =read.csv("cebu.csv",header = T,sep=",")
+d2 =read.table("cebu.csv",header = T,sep = ",")
+d3 =fread("cebu.csv",header = T)
+paste0("CEBU",d1$ID)
+a<-str_replace_all(d1$ID,"CEBU","")
+colSums(is.na(d1))
+d1 <- subset(d1,d1$BRSTFEED != "NA")
+a=apply(d1,2,mean,na.rm= T)
+a
+as.numeric(d1[,1])
+
+for(i in 1:nrow(d1)){
+  for(j in 1:ncol(d1)){
+    if(is.na(d1[i,j]) ==T ){
+      d1[i,j] = a[j]
+    }
+  }
+}
+hist(d1$HEIGHT,breaks = 20)
+library(plyr)
+library(reshape2)
+b <-ddply(d1,.(GENDER),summarise,avg = mean(WEIGHT))
+b
+d1_25<-filter(d1,AGE>=25)
+d1_25
+dcast(d1_25,ID~AGE,value.var = "HEIGHT",sum)
+write.table(d1,"cebu_new.csv",row.names = F,quote = F)
+d<-melt(d1_25,id= c('ID',"AGE"))
+d
+acast(d,ID~AGE~variable)
+
+library(data.table)
+#(1)
+d1 <-read.csv("https://canvas.ssu.ac.kr/courses/10411/files/244340/download?verifier=MxF4lhRP10gxLaPk6FPZTKtE3VA0ezVKefQLPtL1")
+d2 <-fread("https://canvas.ssu.ac.kr/courses/10411/files/244340/download?verifier=MxF4lhRP10gxLaPk6FPZTKtE3VA0ezVKefQLPtL1")
+head(d1)
+#(2)
+d1$period <-str_replace_all(d1$period,'-','~')
+head(d1$period)
+#(3)
+d2<- str_sub(d1$period,6,8)
+d2<-paste0("~19",d2)
+d2
+d1$period <- str_replace_all(d1$period,"~[0-9]{2}",d2)
+head(d1$period)
+#(4)
+apply(is.na(d1),2,sum)
+na.omit(d1$u5mr)
+d1<-subset(d1, is.na(d1$u5mr) != T )
+
+#(5)
+hist(d1$u5mr, col = "lightblue",breaks = 20,freq = F,)
+lines(density(d1$u5mr),col = "red")
+
+#(6)
+
+gdppc.na<-ddply(d1,.(cname),summarise, avg=mean(gdppc,na.rm = T))
+gdppc.na
+#(7)
+as.numeric(d1$gdppc)
+as.numeric(gdppc.na$avg)
+head(gdppc.na)
+for(i in 1:nrow(d1)){
+  for(j in 1:nrow(gdppc.na)){
+    if(d1$cname[i] == gdppc.na$cname[j] & is.na(d1$gdppc[i]) == T ){
+      d1$gdppc[i] = gdppc.na$avg[j]
+    }
+  }
+}
+
+#(8)
+d1_360 <-filter(d1,u5mr>360)
+
+#(9)
+d1.table<-dcast(d1_360,period~cname,value.var = "gdppc",sum)
+head(d1.table)
+
+#(10)
+write.csv(d1,"mortality_new.csv",row.names=F,quote = F)
+
+a1=c(1,2,3,4,5)
+a2=c(1,2,3,4,5)
+a3=c(1,2,3,4,5)
+a4=c(1,2,3,4,5)
+a5=c(1,2,3,4,5)
+pain = c(a1,a2,a3,a4,a5)
+group = c('a1','a2','a3','a4','a5')
+group = rep(group,c(5,5,5,5,5))
+group
+pain.dat = data.frame(group,pain)
+attach(pain.dat)
+tapply(pain, group, sum)
+tapply(pain, group, mean)
+aov.out <- aov(pain~group,pain.dat)
+summary(aov.out)
