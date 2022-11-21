@@ -504,3 +504,58 @@ drv <- JDBC(driverClass="com.mysql.cj.jdbc.Driver",
             classPath = "C:/mysql-connector-java-8.0.18.jar")
 conn <- dbConnect(drv, "jdbc:mysql://127.0.0.1:3306/work?serverTimezone=UTC", "scott", "tiger")
 ############################################ 
+
+#10장
+#(1)
+salary <- read.table(file = "C:/Download/salary.txt",header = TRUE)
+fi2.sal <- glm(gender~salary+ year, family = binomial(link="logit"),data = salary)
+summary(fi2.sal)  
+qchisq(0.95,48) #기준값
+#적합된 모형
+#적합도가 기준값 보다 작다, D(=47.343) < 65.147 이므로 적합도가 좋다
+# log(piehat/(1-piehat)) = 1.792 -8.009*1^(-5)x1-1.865^(-1)x2
+coeff <- coef(fi2.sal)
+coeff
+exp(coeff) #오즈비 계산
+
+#(2)
+계수 추정값으로 각각의 오즈비를 구할 수 있다.
+exp(-0.08009)
+#연봉이 $1000달러 증가할 때마다 "여성일 확률" 대 "남성일 확률"비인 오즈는
+# exp(-0.08009) = 0.92배씩 증가한다
+
+exp(-0.1865)
+# 근무한 연수가 1증가할 때마다 "여성일 확률" 대 "남성일 확률"비인 오즈는
+# exp(-0.08009) = 0.83배씩 증가한다
+
+#(3)
+#year을 추가 했을때 salary의 p-value 값이 0.05보다 크므로 통계적으로 유의하지 않다. 
+#즉, 연봉이 높을수록 남성일 확률이 높지만 그 차이는 통계적으로 유의하지 않다
+#남녀간의 연봉의 차이가 있지만 성별과는 관계가 없다
+
+#(4)
+plot(gender~year,data = salary)
+with(salary,lines(lowess(year,gender),lty =2,col=2))
+curve(exp(1.792-0.1865*x)/(1+exp(1.792-0.1865*x)),add = T,col=4)
+#그래프를 보면 오래 근무한 여성보다 오래 근무한 남성의 수가 더 많다.
+#성별의 차이로 인한 연봉의 차이가 생겼다기 보단 근무한 연수의 차이로 인한
+#남여의 연봉차이가 생겼다고 예측할 수 있다.
+
+#(5)
+salary$gender <-ifelse(salary$gender == 1,0,1) #여성을 0으로 남성을 1로 변경
+fi3.sal <- glm(gender~salary+ year, family = binomial(link="logit"),data = salary)
+summary(fi3.sal)  
+plot(gender~year,data = salary)
+#추정량의 변화가 없다.
+
+#10-4
+gender1 <- rep(1,320)
+gender2 <- rep(0,410)
+gender <- c(gender1,gender2)
+agree <-c(rep(1,192),rep(0,128),rep(1,123),rep(0,287))
+agree <-data.frame(gender,agree)
+gendagree <- glm(agree~gender,family = binomial(link = "logit"),data = agree)
+summary(gendagree)
+exp(gendagree$coefficients)
+
+#천성한 사람을 봤을때 "여성일 확률" 대 "남성일 확률"비인 오즈는 3.5배이다
