@@ -559,3 +559,14 @@ summary(gendagree)
 exp(gendagree$coefficients)
 
 #천성한 사람을 봤을때 "여성일 확률" 대 "남성일 확률"비인 오즈는 3.5배이다
+
+kgss <- read.csv(file = "C:/Download/chastity.csv",header = TRUE)
+kgss$chastity = ifelse(kgss$chastity ==1,0,1)
+fit2.kgss <- glm(chastity~ factor(gender)+educ + factor(age) +factor(income)
+                 +factor(religion),family = binomial(link = "logit"),data = kgss)
+summary(fit2.kgss)
+
+fit3.kgss <- glm(chastity~ educ+ factor(age) + factor(religion),
+                 family = binomial(link = "logit"),data = kgss)
+summary(fit3.kgss)
+anova(fit2.kgss,fit3.kgss,test = "Chisq")
