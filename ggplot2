@@ -1,0 +1,65 @@
+install.packages("ggplot2")
+library(ggplot2)
+library(NLP)
+data(mpg)
+str(mpg)
+table(mpg$drv)
+# 1개의 변수 넣으면 히스토그램 또는 바 그래프
+qplot(hwy, data=mpg)
+qplot(hwy, data=mpg,col = I('black'),fill = I('light blue'))
+qplot(hwy, data=mpg,col = I('black'),fill = drv)
+qplot(hwy, data=mpg,col = I('black'),fill = drv,binwidth =2 )
+qplot(hwy, data=mpg,col = I('black'),fill = drv, facets =.~ drv, binwidth=2) # 열 단위(열 형태의 패널)
+qplot(hwy, data=mpg,col = I('black'),fill = drv, facets =drv~., binwidth=2) # 행 단위 (ex) 3행 구조
+head(diamonds)
+qplot(clarity, data = diamonds, fill = cut, geam = "bar") #레이아웃 (기준) 자체에 색 채우기
+qplot(clarity, data = diamonds,color = cut, geam = "bar") #테두리만 색 채우기
+#2 개의 변수 사용시 산점도 형태
+qplot(displ, hwy, data = mpg)
+qplot(displ, hwy, data = mpg, color = drv)
+qplot(displ, hwy, data = mpg,color = drv ,facets = .~drv)
+qplot(displ, hwy, data = mpg,color = drv ,facets = drv~.)
+qplot(displ, hwy, data = mpg,color = cyl ,facets = cyl ~ drv) #열 패널이 drv 행패널이 cyl 기준범수로 나눠짐
+#다른 말로 x축 기준값이 drv , y축 기준값이 cyl 이 된다.
+head(mtcars)
+qplot(wt, mpg, data = mtcars, color = factor(carb)) #carb 변수를 기준으로 크기 적용
+qplot(wt, mpg, data = mtcars, color = factor(carb),size = qsec)
+qplot(wt, mpg, data = mtcars, color = factor(carb),size = qsec, shape = factor(cyl))
+
+#qplot function
+qplot(wt, mpg, data= mtcars, geom = "point")
+qplot(wt, mpg, data= mtcars, geom = "smooth") #method = lowess
+qplot(wt, mpg, data= mtcars, geom = c("point",'smooth')) #두 가지 동시
+qplot(wt, mpg, data= mtcars, geom = c("point",'smooth'), color = factor(cyl)) #cyl 분류별로 곡선을 그려줌
+qplot(wt, mpg, data= mtcars, geom = "line",color = factor(cyl)) #polygon?
+qplot(wt, mpg, data= mtcars, geom =c( "line",'point'),color = factor(cyl)) #점을 직선으로 이어줌
+
+#ggplot setting
+head(diamonds)
+ggplot(diamonds)
+ggplot(diamonds, aes(x=carat))
+ggplot(diamonds, aes(x=carat, y=price))      
+ggplot(diamonds, aes(x=carat, color = cut))
+ggplot(diamonds, aes(x=carat), color = "steelblue")
+ggplot(diamonds, aes(x=carat, y= price, color =cut))
+
+#layers
+ggplot(diamonds, aes(x=carat, y= price, color=cut)) + geom_point() +geom_smooth()
+ggplot(diamonds) + geom_point(aes(x=carat, y= price, color =cut)) + geom_smooth(aes(x=carat, y= price, color =cut))
+ggplot(diamonds, aes(x=carat, y= price)) + geom_point(aes(color =cut)) + geom_smooth() #?? 설명 어케하는겨
+
+gg <- ggplot(diamonds, aes(x=carat, y= price, color = cut))+geom_point()+
+  labs(title = "Scartterplot", x="Carat",y="Price")
+print(gg)
+
+#Theme
+gg1 <- gg + theme(plot.title = element_text(size=30,  face = 'bold'),
+            axis.text.x = element_text(size = 15), axis.text.y =element_text(size=15),
+            axis.title.x= element_text(size = 15),axis.title.y = element_text(size=25))+
+            scale_color_discrete(name="Cut of diamonds")
+print(gg1)            
+head(diamonds)
+#facets
+gg1+ facet_wrap(.~cut, ncol=3)
+gg1+ facet_wrap(color~cut) #row : color (y축) , col : cut(x축)
+gg1+ facet_grid(color~cut) #row : color (y축) , col : cut(x축)
