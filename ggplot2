@@ -63,3 +63,18 @@ head(diamonds)
 gg1+ facet_wrap(.~cut, ncol=3)
 gg1+ facet_wrap(color~cut) #row : color (y축) , col : cut(x축)
 gg1+ facet_grid(color~cut) #row : color (y축) , col : cut(x축)
+library(datasets)
+data("airquality")
+airquality$Month <- factor(airquality$Month, labels = c('May', "jun","Jul","Aug","Sep"))
+p10 <- ggplot(airquality, aes(x= Month, y= Ozone)) + geom_boxplot()
+p10 <- p10 + scale_x_discrete(name = "Month") + scale_y_continuous(name = "Mean ozone in \nparts per billion")
+p10
+p10 <- p10 + scale_y_continuous(name ="Mean ozone in \nparts per billion",breaks = seq(0,175,25),limits = c(0,175) )
+p10
+p10 <- ggplot(airquality, aes(x=Month ,y= Ozone)) +
+  geom_boxplot(fill="#4271AE",colour = 'black' ) +
+  scale_y_continuous(name = "Mean ozone in \nparts per billion",
+                     breaks = seq(0,175,25),limits = c(0,175)) +
+  scale_x_discrete(name = 'Month') +ggtitle("Boxplot of mean ozne by month")
+p10 <- p10 + theme_bw()
+p10
