@@ -1,0 +1,41 @@
+.# install packages
+install.packages("DBI")   # R Database Interface
+install.packages("rJava") # rJava 패키지 (JRE 설치 필요)
+install.packages("RJDBC") # JDBC()함수 제공
+
+# load packages
+library(DBI)
+library(rJava)
+library(RJDBC) # after loading rJava
+
+################ MariaDB ###############
+drv <- JDBC(driverClass="com.mysql.cj.jdbc.Driver", 
+            classPath = "/Users/seungkwanjo/Applications/mysql-connector-java-8.0.27.jar")
+conn <- dbConnect(drv, "jdbc:mysql://127.0.0.1:3306/work?serverTimezone=UTC", "scott", "tiger")
+############################################ 
+conn
+dbGetQuery(conn, "select * from goods where code=2 or code=4")
+dbGetQuery(conn, "select code, name from goods")
+dbGetQuery(conn, "select code, name,su from goods where code=1 or code=2")
+dbGetQuery(conn, "select * from goods where su>2")
+dbGetQuery(conn, "select * from goods")
+dbSendUpdate(conn, "create table goods1 as select * from goods")
+dbSendUpdate(conn, "alter table goods1 rename to goods_original")
+
+dbSendUpdate(conn, "insert into goods values (5, '식기세척기', 1, 250000)")
+dbSendUpdate(conn, "insert into goods values (6, 'test', 1, 1000)")
+dbSendUpdate(conn, "update goods set name='테스트' where code=6")
+dbSendUpdate(conn, "update goods set name='테스트', su='3' where code=6")
+dbSendUpdate(conn, "delete from goods where code=6") 
+dbGetQuery(conn, "select * from goods_original")
+dbGetQuery(conn, "select * from goods")
+dbGetQuery(conn, "select * from goods_original right join goods on 
+          goods_original.code = goods.code")
+
+getwd()
+recode <- read.csv("recode.csv",header = TRUE, fileEncoding = "CP949", encoding = "UTF-8")
+dbWriteTable(conn,"goods_new",recode)
+
+dbGetQuery(conn, "select * from goods_new")
+
+dbDisconnect(conn)
